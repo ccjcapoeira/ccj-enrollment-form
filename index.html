@@ -958,7 +958,7 @@
         <svg fill="none" viewBox="0 0 24 24" stroke="#fff" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
       </div>
       <h2>お申し込みありがとうございます！</h2>
-      <p>入会申し込みを受け付けました。確認のご連絡を差し上げますので、しばらくお待ちください。</p>
+      <p>入会申し込みを受け付けました。返信メールをご確認のうえ、必要なお手続きをお願いします。</p>
       <div class="success-next-step" id="successNextStep"></div>
       <p style="font-size:13px;color:var(--text-muted)">
         ご不明な点がございましたら<br>
@@ -1353,7 +1353,7 @@
   function renderSuccessNextStep(paymentMethod) {
     var guidance = {
       '口座振替':
-        '次のご案内: 口座登録手続きのご案内を担当よりお送りします。到着後、期日までに登録をお願いします。',
+        '次のご案内: 返信メールに記載の「口座振替ご登録ページURL」からお手続きをお願いします。メール内の団体コードをご確認のうえ、期日までに口座登録を完了してください。',
       'クレジットカード(PayPal)':
         '次のご案内: PayPal決済ページのご案内を担当よりお送りします。案内到着後にお手続きをお願いします。',
       '現金':
@@ -1362,9 +1362,25 @@
     successNextStep.textContent = guidance[paymentMethod] || '次のご案内: お支払い方法に応じたご連絡を担当より差し上げます。';
   }
 
+  function showSuccessPreviewFromQuery() {
+    var params = new URLSearchParams(window.location.search);
+    var preview = params.get('success');
+    if (!preview) return;
+
+    var methods = {
+      bank: '口座振替',
+      paypal: 'クレジットカード(PayPal)',
+      cash: '現金'
+    };
+    renderSuccessNextStep(methods[preview] || '口座振替');
+    formContainer.style.display = 'none';
+    successScreen.classList.add('active');
+  }
+
   termsVersionLabel.textContent = '規約 v' + POLICY.termsVersion + ' 確認済み';
   privacyVersionLabel.textContent = 'ポリシー確認済み（規約 v' + POLICY.termsVersion + '）';
   updateFeeEstimate(null);
+  showSuccessPreviewFromQuery();
 
 })();
 </script>

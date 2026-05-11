@@ -151,6 +151,22 @@ function handleLeaveRequest_(ss, root) {
  */
 function sendConfirmationEmail(data) {
   var subject = '【CCJ.CAPOEIRA OSAKA】入会申し込みを受け付けました';
+  var bankTransferUrl = 'https://www.nss-jp2.com/page_ex.jsp?CONTROLID=KTS0960&BUSINESSID=initDisp&DISPLAY_KEY_param=2k7XiZXZspuiZX';
+  var organizationCode = '0944082';
+  var paymentMethod = data['支払い方法'] || '';
+  var bankTransferGuide = '';
+
+  if (paymentMethod.indexOf('口座振替') !== -1) {
+    bankTransferGuide = '\n'
+      + '【口座振替ご登録のお願い】\n'
+      + '口座振替のお手続きについては、以下のページをご確認ください。\n'
+      + bankTransferUrl + '\n\n'
+      + 'お手続き時の団体コード（必須）: ' + organizationCode + '\n\n'
+      + '別途ご提出いただく書類はございません。\n'
+      + '引き落としは毎月27日前後（月末付近）を目安として行われます。\n'
+      + 'お手続きはできるだけお早めに完了ください。完了のタイミングにより、初回の引き\n'
+      + '落としが翌月以降となる場合があります。\n';
+  }
 
   var body = data['氏名'] + ' 様\n\n'
     + 'この度は入会申し込みいただき、ありがとうございます。\n'
@@ -172,7 +188,8 @@ function sendConfirmationEmail(data) {
     + '■ 規約同意: ' + (data['年会費規定同意'] || '同意') + '\n'
     + '■ 個人情報同意: ' + (data['個人情報取扱同意'] || '同意') + '\n'
     + (data['備考'] ? '■ 備考: ' + data['備考'] + '\n' : '')
-    + '━━━━━━━━━━━━━━━━━━━━\n\n'
+    + '━━━━━━━━━━━━━━━━━━━━\n'
+    + bankTransferGuide + '\n'
     + '担当者よりご連絡を差し上げますので、\n'
     + 'しばらくお待ちくださいませ。\n\n'
     + 'ご不明な点がございましたら、\n'
