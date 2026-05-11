@@ -6,9 +6,18 @@
 
 次のURLで公開されています（閲覧・申し込み用）。
 
-- 入会: https://soquetecapoeira-max.github.io/ccj-enrollment-form/
-- プラン変更（会員向け）: https://soquetecapoeira-max.github.io/ccj-enrollment-form/plan-change.html
-- 退会のお手続き（会員向け）: https://soquetecapoeira-max.github.io/ccj-enrollment-form/leave-request.html
+- 入会: https://ccjcapoeira.github.io/ccj-enrollment-form/
+- プラン変更（会員向け）: https://ccjcapoeira.github.io/ccj-enrollment-form/plan-change.html
+- 退会のお手続き（会員向け）: https://ccjcapoeira.github.io/ccj-enrollment-form/leave-request.html
+
+### URL移管記録（2026-05-11）
+
+- GitHubリポジトリを `soquetecapoeira-max/ccj-enrollment-form` から `ccjcapoeira/ccj-enrollment-form` へ移管済み
+- ローカルの `origin` は `https://github.com/ccjcapoeira/ccj-enrollment-form.git` に変更済み
+- GitHub Pages は `main` ブランチ `/` から公開、状態は `built` を確認済み
+- 旧URL `https://soquetecapoeira-max.github.io/ccj-enrollment-form/` は 404 で利用不可
+- 新URLの入会 / プラン変更 / 退会 / 入会規約ページは表示確認済み
+- 移管手順と確認項目は `docs/github-url-migration-to-ccjcapoeira.md` に記録
 
 ## 機能
 
@@ -84,6 +93,7 @@ ccj-enrollment-form/
 ├── google-apps-script.js   # Google Apps Script（スプレッドシート連携用）
 ├── docs/
 │   ├── contract-alignment-report.md # 紙とWebの整合差分と対応履歴
+│   ├── github-url-migration-to-ccjcapoeira.md # GitHub Pages URL移管手順と記録
 │   └── member-services.md  # プラン変更・休会・大会など拡張の設計メモ
 ├── PROGRESS.md             # 進捗・デプロイ情報のメモ（運用向け）
 └── README.md               # このファイル

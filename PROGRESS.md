@@ -76,8 +76,8 @@
 
 ## 公開URL
 
-- 入会: https://soquetecapoeira-max.github.io/ccj-enrollment-form/
-- プラン変更: https://soquetecapoeira-max.github.io/ccj-enrollment-form/plan-change.html
+- 入会: https://ccjcapoeira.github.io/ccj-enrollment-form/
+- プラン変更: https://ccjcapoeira.github.io/ccj-enrollment-form/plan-change.html
 
 ## メンバー手続きの拡張（設計）
 
