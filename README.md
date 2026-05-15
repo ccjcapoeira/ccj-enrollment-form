@@ -130,3 +130,57 @@ ccj-enrollment-form/
 - 入会用データは、シート名が **入会** のタブがあればそこに、なければ **ブック内の先頭シート** に書き込みます
 - 規約の正本は `terms-adult.html` とし、旧紙規約は新規案内で使用しません
 - 規約変更時は `terms-adult.html` を更新し、`docs/contract-alignment-report.md` に承認記録を追記してください
+
+## 2台PC同期（push / pull 自動化）
+
+このリポジトリには、macOS向けの自動同期スクリプトを同梱しています。
+
+- `scripts/git-sync-safe.sh`  
+  安全同期スクリプト（`pull --rebase` + `push`）。競合や未コミット変更がある場合は同期を止めます。
+- `scripts/install-mac-auto-sync.sh`  
+  LaunchAgent を登録して、指定秒ごとに自動同期します。
+- `scripts/uninstall-mac-auto-sync.sh`  
+  自動同期設定の解除用です。
+- `scripts/run-sync-loop.sh`  
+  ターミナル常駐型の自動同期（LaunchAgent を使わない代替手段）
+
+### 設定手順（両方のPCで同じ）
+
+1. このリポジトリのルートで実行
+2. 実行権限を付与
+3. 自動同期をインストール
+
+```bash
+chmod +x scripts/git-sync-safe.sh scripts/install-mac-auto-sync.sh scripts/uninstall-mac-auto-sync.sh
+./scripts/install-mac-auto-sync.sh 120 0
+```
+
+- 第1引数 `120`: 実行間隔（秒）
+- 第2引数 `0`: 自動コミットOFF（推奨）
+  - `1` にすると、未コミット変更を自動コミットしてから push/pull します
+- リポジトリが `Desktop` / `Documents` / `Downloads` 配下にある場合、macOSの権限制約で LaunchAgent が失敗することがあります  
+  - その場合は `~/Github/...` など保護フォルダ外へ移動してから実行してください
+  - 強制実行したい場合は `ALLOW_PROTECTED_DIR=1` を付けて実行できます
+
+### 動作確認
+
+```bash
+launchctl print gui/$(id -u)/com.ccj.enrollment-form.autosync
+```
+
+ログはリポジトリ直下の `.autosync.log` に追記されます。
+
+### 停止（解除）
+
+```bash
+./scripts/uninstall-mac-auto-sync.sh
+```
+
+### LaunchAgent が使えない場合の代替（Desktop配下など）
+
+```bash
+chmod +x scripts/run-sync-loop.sh
+./scripts/run-sync-loop.sh 120
+```
+
+この方法は、ターミナルを開いている間だけ 120 秒ごとに同期します（`Ctrl+C` で停止）。
