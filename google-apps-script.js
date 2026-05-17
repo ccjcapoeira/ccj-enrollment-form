@@ -152,7 +152,7 @@ function handleLeaveRequest_(ss, root) {
 function buildInitialPaymentGuide_(courseName) {
   var annualFee = 3500;
   var monthlyFees = {
-    'ビギナーコース': 6700,
+    'レギュラーコース': 6700,
     'アドバンスコース': 9400,
     'プロコース': 13000,
     'キッズクラス': 5000
