@@ -149,12 +149,53 @@ function handleLeaveRequest_(ss, root) {
  * 申し込み者に確認メールを自動送信する（任意機能）
  * 不要な場合は handleEnrollmentLegacy_ 内の sendConfirmationEmail(data); を削除してください
  */
+function buildInitialPaymentGuide_(courseName) {
+  var annualFee = 3500;
+  var monthlyFees = {
+    'ビギナーコース': 6700,
+    'アドバンスコース': 9400,
+    'プロコース': 13000,
+    'キッズクラス': 5000
+  };
+
+  if (courseName === 'ドロップイン') {
+    return '\n'
+      + '【初回にお支払いいただく費用の目安】\n'
+      + '■ 参加費: 2,500円 / 回\n\n'
+      + '※ ドロップインは都度払いです。年会費等の扱いは規約・運用案内をご確認ください。\n';
+  }
+
+  var monthlyFee = monthlyFees[courseName];
+  if (!monthlyFee) {
+    return '\n'
+      + '【初回にお支払いいただく費用の目安】\n'
+      + '■ 入会金: 5,000円 → キャンペーンにつき無料\n'
+      + '■ 年会費: 3,500円\n'
+      + '■ 初月会費: コースにより異なります\n\n'
+      + '※ 詳細金額は担当者よりご案内いたします。\n';
+  }
+
+  return '\n'
+    + '【初回にお支払いいただく費用の目安】\n'
+    + '■ 入会金: 5,000円 → キャンペーンにつき無料\n'
+    + '■ 年会費: 3,500円\n'
+    + '■ 初月会費: ' + formatYen_(monthlyFee) + '\n'
+    + '■ 初回合計: ' + formatYen_(annualFee + monthlyFee) + '\n\n'
+    + '※ 年会費は入会時および毎年3月に3,500円をお支払いいただきます。\n'
+    + '※ コースや開始時期により金額が変わる場合は、担当者よりご案内いたします。\n';
+}
+
+function formatYen_(amount) {
+  return Number(amount).toLocaleString('ja-JP') + '円';
+}
+
 function sendConfirmationEmail(data) {
   var subject = '【CCJ.CAPOEIRA OSAKA】入会申し込みを受け付けました';
   var bankTransferUrl = 'https://www.nss-jp2.com/page_ex.jsp?CONTROLID=KTS0960&BUSINESSID=initDisp&DISPLAY_KEY_param=2k7XiZXZspuiZX';
   var organizationCode = '0944082';
   var paymentMethod = data['支払い方法'] || '';
   var bankTransferGuide = '';
+  var initialPaymentGuide = buildInitialPaymentGuide_(data['コース']);
 
   if (paymentMethod.indexOf('口座振替') !== -1) {
     bankTransferGuide = '\n'
@@ -184,7 +225,7 @@ function sendConfirmationEmail(data) {
     + '■ 住所: ' + data['住所1'] + ' ' + (data['住所2'] || '') + '\n'
     + (data['保護者氏名'] ? '■ 保護者氏名: ' + data['保護者氏名'] + '\n' : '')
     + '■ 支払い方法: ' + data['支払い方法'] + '\n'
-    + '■ 年会費: 入会時および毎年3月に3,500円\n'
+    + initialPaymentGuide + '\n'
     + '■ 規約同意: ' + (data['年会費規定同意'] || '同意') + '\n'
     + '■ 個人情報同意: ' + (data['個人情報取扱同意'] || '同意') + '\n'
     + (data['備考'] ? '■ 備考: ' + data['備考'] + '\n' : '')
