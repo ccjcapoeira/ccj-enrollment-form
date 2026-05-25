@@ -11,7 +11,7 @@
 //
 // 2. プラン変更用シート「プラン変更」は、初回のプラン変更送信時に自動作成されます。
 //    手動で用意する場合は 1 行目を次のとおりにしてください:
-//      申請日時 | 氏名 | メールアドレス | 電話番号 | 現コース | 希望コース | 希望反映 | 備考
+//      申請日時 | 氏名 | メールアドレス | 電話番号 | 現コース | 希望コース | 希望反映 | 備考 | 休会開始希望月 | 再開予定月 | 休会理由
 //
 // 3. メニュー「拡張機能」→「Apps Script」を開き、下記を貼り付けて保存
 //
@@ -84,7 +84,10 @@ var PLAN_CHANGE_HEADERS_ = [
   '現コース',
   '希望コース',
   '希望反映',
-  '備考'
+  '備考',
+  '休会開始希望月',
+  '再開予定月',
+  '休会理由'
 ];
 
 var LEAVE_REQUEST_HEADERS_ = [
@@ -105,6 +108,8 @@ function handlePlanChange_(ss, root) {
   if (!sheet) {
     sheet = ss.insertSheet('プラン変更');
     sheet.appendRow(PLAN_CHANGE_HEADERS_);
+  } else {
+    ensureHeaders_(sheet, PLAN_CHANGE_HEADERS_);
   }
 
   var ts = Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyyy/MM/dd HH:mm');
@@ -116,10 +121,29 @@ function handlePlanChange_(ss, root) {
     p['現コース'] || '',
     p['希望コース'] || '',
     p['希望反映'] || '',
-    p['備考'] || ''
+    p['備考'] || '',
+    p['休会開始希望月'] || '',
+    p['再開予定月'] || '',
+    p['休会理由'] || ''
   ];
   sheet.appendRow(row);
   sendPlanChangeConfirmationEmail_(p);
+}
+
+function ensureHeaders_(sheet, expectedHeaders) {
+  var lastColumn = sheet.getLastColumn();
+  if (lastColumn === 0) {
+    sheet.appendRow(expectedHeaders);
+    return;
+  }
+
+  var existingHeaders = sheet.getRange(1, 1, 1, lastColumn).getValues()[0];
+  expectedHeaders.forEach(function(header) {
+    if (existingHeaders.indexOf(header) === -1) {
+      sheet.getRange(1, sheet.getLastColumn() + 1).setValue(header);
+      existingHeaders.push(header);
+    }
+  });
 }
 
 /** 退会のお手続きフォーム（formType + payload） */
@@ -249,14 +273,17 @@ function sendConfirmationEmail(data) {
  * プラン変更申出の確認メール（任意・不要なら handlePlanChange_ 内の呼び出しを削除）
  */
 function sendPlanChangeConfirmationEmail_(p) {
-  var subject = '【CCJ.CAPOEIRA OSAKA】プラン変更のお申し出を受け付けました';
+  var subject = '【CCJ.CAPOEIRA OSAKA】プラン変更・休会のお申し出を受け付けました';
   var body = (p['氏名'] || '会員') + ' 様\n\n'
-    + 'プラン変更のお申し出を以下の内容で受け付けました。\n'
+    + 'プラン変更・休会のお申し出を以下の内容で受け付けました。\n'
     + '担当にて内容を確認のうえ、ご連絡いたします。\n\n'
     + '━━━━━━━━━━━━━━━━━━━━\n'
     + '■ 現コース: ' + (p['現コース'] || '') + '\n'
     + '■ 希望コース: ' + (p['希望コース'] || '') + '\n'
     + '■ 希望反映: ' + (p['希望反映'] || '') + '\n'
+    + (p['休会開始希望月'] ? '■ 休会開始希望月: ' + p['休会開始希望月'] + '\n' : '')
+    + (p['再開予定月'] ? '■ 再開予定月: ' + p['再開予定月'] + '\n' : '')
+    + (p['休会理由'] ? '■ 休会理由: ' + p['休会理由'] + '\n' : '')
     + '■ 電話番号: ' + (p['電話番号'] || '') + '\n'
     + '■ メールアドレス: ' + (p['メールアドレス'] || '') + '\n'
     + (p['備考'] ? '■ 備考: ' + p['備考'] + '\n' : '')

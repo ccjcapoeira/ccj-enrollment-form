@@ -135,6 +135,7 @@
     input[type="text"],
     input[type="email"],
     input[type="tel"],
+    input[type="month"],
     select,
     textarea {
       width: 100%;
@@ -182,6 +183,7 @@
       margin-top: 6px;
       line-height: 1.6;
     }
+    .conditional-section[hidden] { display: none; }
     .submit-btn {
       width: 100%;
       padding: 16px;
@@ -320,7 +322,7 @@
     <div class="hero-content">
       <div class="hero-logo">CCJ.CAPOEIRA OSAKA</div>
       <h1>プラン変更のお手続き</h1>
-      <p>会員の方がコースの変更を希望される場合は、以下よりお申し出ください。担当が内容を確認のうえご連絡します。</p>
+      <p>会員の方がコースの変更・休会を希望される場合は、以下よりお申し出ください。担当が内容を確認のうえご連絡します。</p>
       <p class="hero-note">初めてのご入会は <a href="index.html">入会申し込みフォーム</a> からお願いします。</p>
     </div>
   </header>
@@ -339,8 +341,10 @@
             <option value="プロコース">プロコース（¥13,000 / 月・1ヶ月無制限）</option>
             <option value="キッズクラス">キッズクラス（¥5,000 / 月・最大週2回まで）</option>
             <option value="ドロップイン">ドロップイン（¥2,500 / 回・都度参加）</option>
+            <option value="休会中">休会中</option>
           </select>
           <div class="error-msg" id="currentCourseError">現在のコースを選択してください</div>
+          <p class="help">現在休会中の方は「休会中」を選択してください。</p>
         </div>
 
         <div class="field-group">
@@ -352,9 +356,11 @@
             <option value="プロコース">プロコース（¥13,000 / 月・1ヶ月無制限）</option>
             <option value="キッズクラス">キッズクラス（¥5,000 / 月・最大週2回まで）</option>
             <option value="ドロップイン">ドロップイン（¥2,500 / 回・都度参加）</option>
+            <option value="休会">休会</option>
           </select>
           <div class="error-msg" id="desiredCourseError">変更後のコースを選択してください</div>
           <div class="error-msg" id="sameCourseError">現在と同じコースは選べません</div>
+          <p class="help">休会を希望される場合は「休会」を選択してください。</p>
         </div>
 
         <div class="field-group">
@@ -366,6 +372,36 @@
             <option value="希望月は相談したい">希望月は相談したい</option>
           </select>
           <div class="error-msg" id="whenApplyError">希望反映タイミングを選択してください</div>
+        </div>
+
+        <div class="conditional-section" id="leaveDetails" hidden>
+          <div class="section-title"><span class="icon">休</span>休会希望の詳細</div>
+          <p class="help">変更後のコースで「休会」を選択した方のみ入力してください。</p>
+
+          <div class="field-row" style="margin-top:16px">
+            <div class="field-group">
+              <label for="leaveStartMonth">休会開始希望月<span class="required">必須</span></label>
+              <input type="month" id="leaveStartMonth" name="leaveStartMonth">
+              <div class="error-msg" id="leaveStartMonthError">休会開始希望月を入力してください</div>
+            </div>
+            <div class="field-group">
+              <label for="resumeMonth">再開予定月<span class="optional">任意</span></label>
+              <input type="month" id="resumeMonth" name="resumeMonth">
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label for="leaveReason">休会理由<span class="required">必須</span></label>
+            <select id="leaveReason" name="leaveReason">
+              <option value="">選択してください</option>
+              <option value="仕事・学業の都合">仕事・学業の都合</option>
+              <option value="体調・けが">体調・けが</option>
+              <option value="家庭の都合">家庭の都合</option>
+              <option value="一時的に通えないため">一時的に通えないため</option>
+              <option value="その他">その他</option>
+            </select>
+            <div class="error-msg" id="leaveReasonError">休会理由を選択してください</div>
+          </div>
         </div>
 
         <div class="field-group">
@@ -401,7 +437,7 @@
       <div class="form-card" style="text-align:center">
         <button type="button" class="submit-btn" id="submitBtn">入力内容を確認する</button>
         <div class="privacy-note">
-          送信内容はプラン変更手続きおよびご連絡のために使用します。<br>
+          送信内容はプラン変更・休会手続きおよびご連絡のために使用します。<br>
           <a href="https://cordao.org/free/privacy" target="_blank">CCJ.CAPOEIRA OSAKA</a> の方針に同意の上、送信してください。
         </div>
       </div>
@@ -425,7 +461,7 @@
         <svg fill="none" viewBox="0 0 24 24" stroke="#fff" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
       </div>
       <h2>受け付けました</h2>
-      <p>プラン変更のお申し出を記録しました。担当よりご連絡するまでお待ちください。会費・契約の変更は、確認と手続き完了後に反映されます。</p>
+      <p>プラン変更・休会のお申し出を記録しました。担当よりご連絡するまでお待ちください。会費・契約の変更は、確認と手続き完了後に反映されます。</p>
       <p style="font-size:13px;color:var(--text-muted)">
         ご不明な点は <strong>TEL: 050-3636-3410</strong> までお問い合わせください。
       </p>
@@ -447,6 +483,8 @@
   const btnBack = document.getElementById('btnBack');
   const btnConfirm = document.getElementById('btnConfirm');
   const submitBtn = document.getElementById('submitBtn');
+  const desiredCourse = document.getElementById('desiredCourse');
+  const leaveDetails = document.getElementById('leaveDetails');
 
   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxrVHm38s5AjyAVRdQEeIRBtjZAQ4tnCT2deRMDx0VC7XaiZtpkWoboaPlBIlnBDz3v4g/exec';
 
@@ -483,6 +521,24 @@
     if (!whenApply.value) {
       document.getElementById('whenApplyError').classList.add('show');
       whenApply.classList.add('error');
+      valid = false;
+    }
+
+    var isLeaveRequest = desired.value === '休会';
+    var leaveStartMonth = document.getElementById('leaveStartMonth');
+    var leaveReason = document.getElementById('leaveReason');
+    document.getElementById('leaveStartMonthError').classList.remove('show');
+    document.getElementById('leaveReasonError').classList.remove('show');
+    leaveStartMonth.classList.remove('error');
+    leaveReason.classList.remove('error');
+    if (isLeaveRequest && !leaveStartMonth.value) {
+      document.getElementById('leaveStartMonthError').classList.add('show');
+      leaveStartMonth.classList.add('error');
+      valid = false;
+    }
+    if (isLeaveRequest && !leaveReason.value) {
+      document.getElementById('leaveReasonError').classList.add('show');
+      leaveReason.classList.add('error');
       valid = false;
     }
 
@@ -535,6 +591,21 @@
     });
   });
 
+  function updateLeaveDetails() {
+    var isLeaveRequest = desiredCourse.value === '休会';
+    leaveDetails.hidden = !isLeaveRequest;
+    if (!isLeaveRequest) {
+      ['leaveStartMonth', 'resumeMonth', 'leaveReason'].forEach(function(id) {
+        var el = document.getElementById(id);
+        el.value = '';
+        el.classList.remove('error');
+      });
+      leaveDetails.querySelectorAll('.error-msg').forEach(function(m) { m.classList.remove('show'); });
+    }
+  }
+  desiredCourse.addEventListener('change', updateLeaveDetails);
+  updateLeaveDetails();
+
   function collectPayload() {
     return {
       '氏名': document.getElementById('name').value.trim(),
@@ -543,6 +614,9 @@
       '現コース': document.getElementById('currentCourse').value,
       '希望コース': document.getElementById('desiredCourse').value,
       '希望反映': document.getElementById('whenApply').value,
+      '休会開始希望月': document.getElementById('leaveStartMonth').value,
+      '再開予定月': document.getElementById('resumeMonth').value,
+      '休会理由': document.getElementById('leaveReason').value,
       '備考': document.getElementById('notes').value.trim()
     };
   }
@@ -559,6 +633,9 @@
     '現コース': '現在のコース',
     '希望コース': '変更後のコース',
     '希望反映': '希望反映タイミング',
+    '休会開始希望月': '休会開始希望月',
+    '再開予定月': '再開予定月',
+    '休会理由': '休会理由',
     '備考': '備考',
     '氏名': '氏名',
     'メールアドレス': 'メールアドレス',
