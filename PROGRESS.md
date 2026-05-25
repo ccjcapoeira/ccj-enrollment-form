@@ -11,8 +11,8 @@
 | 項目 | 内容 |
 |------|------|
 | リポジトリ | `/Users/kuboyamatakeshi/Desktop/GitHub/ccj-enrollment-form`（`main` にプッシュ済み） |
-| 直近まで完了 | プラン変更フォーム `plan-change.html`、休会希望項目、GAS の `plan_change` 分岐、ドキュメント更新 |
-| **次にやるとよいこと** | 1) スプレッドシートの Apps Script に `google-apps-script.js` を貼り直し、**ウェブアプリを新バージョンで再デプロイ**（未実施なら必須） 2) `plan-change.html` からテスト送信し、「プラン変更」シートとメールを確認 3) 休会・大会などは `docs/member-services.md` のフェーズ2以降 |
+| 直近まで完了 | プラン変更フォーム `plan-change.html`、休会希望項目、管理者向けメール通知、GAS の `plan_change` 分岐、ドキュメント更新 |
+| **次にやるとよいこと** | 1) テスト送信行（例: `テスト 管理通知確認`）が残っていればスプレッドシートから削除 2) 休会・大会などの追加拡張は `docs/member-services.md` のフェーズ2以降 |
 | 主要ファイル | `index.html`（入会）、`plan-change.html`（プラン変更）、`google-apps-script.js`（GAS 実体はスプレッドシート側） |
 
 ---
@@ -33,6 +33,7 @@
 - [x] **テスト送信** — スプレッドシートへのデータ保存確認済み
 - [x] **GitHub Pages で公開** — URL発行済み
 - [x] **プラン変更 / 休会希望** — `plan-change.html`、GAS の `formType: plan_change` ルート、シート「プラン変更」
+- [x] **管理者向け通知メール** — 入会 / プラン変更・休会 / 退会の内容を `ccj.osaka@gmail.com` へ通知
 
 ---
 
@@ -43,8 +44,9 @@
 | Apps Script URL | `https://script.google.com/macros/s/AKfycbxrVHm38s5AjyAVRdQEeIRBtjZAQ4tnCT2deRMDx0VC7XaiZtpkWoboaPlBIlnBDz3v4g/exec` |
 | スプレッドシート名 | CCJカポエイラ入会申し込み |
 | ローカルファイル | `index.html` / `plan-change.html`（同一 `SCRIPT_URL`） |
+| 管理者通知先 | `ccj.osaka@gmail.com` |
 
-**重要（プラン変更を本番で使うとき）:** スプレッドシートの Apps Script に、リポジトリの `google-apps-script.js` を貼り直し、ウェブアプリを **新バージョンで再デプロイ** するまで、プラン変更の送信は旧コードでは処理されません。
+**確認済み:** 2026-05-25 に Apps Script の新バージョンをデプロイし、`plan-change` のテスト送信で `{"result":"success"}` を確認済み。
 
 ---
 
@@ -71,6 +73,7 @@
 - 送信前の確認画面
 - Google スプレッドシートへ自動保存
 - 申し込み者に確認メール自動送信
+- 管理者向けにフォーム内容をメール通知
 
 ---
 

@@ -127,6 +127,7 @@ ccj-enrollment-form/
 - Google Apps Script のURLが未設定の場合、フォームはデモモードで動作します（送信データはコンソールに出力）
 - 確認メール機能を使わない場合は `google-apps-script.js` 内の `sendConfirmationEmail(data);` の行を削除してください
 - プラン変更・休会希望の確認メールを止める場合は `handlePlanChange_` 内の `sendPlanChangeConfirmationEmail_(p);` を削除してください
+- 管理者向け通知メールは `ccj.osaka@gmail.com` 宛に送信されます。変更する場合は `google-apps-script.js` の `OWNER_EMAIL_OVERRIDE_` を更新してください
 - 既存の「プラン変更」シートに休会用の列が無い場合、GAS が初回送信時に `休会開始希望月` / `再開予定月` / `休会理由` の列を自動追加します
 - 入会用データは、シート名が **入会** のタブがあればそこに、なければ **ブック内の先頭シート** に書き込みます
 - 規約の正本は `terms-adult.html` とし、旧紙規約は新規案内で使用しません

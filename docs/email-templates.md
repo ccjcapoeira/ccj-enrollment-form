@@ -4,6 +4,8 @@
 
 実際に送信される文面を変更する場合は、`google-apps-script.js` の該当メール本文も更新してください。
 
+管理者向け通知メールは `ccj.osaka@gmail.com` 宛に送信されます。変更する場合は `google-apps-script.js` の `OWNER_EMAIL_OVERRIDE_` を更新してください。
+
 ## 入会申し込み完了メール
 
 ### 件名

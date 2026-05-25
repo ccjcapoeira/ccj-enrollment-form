@@ -21,6 +21,10 @@
 //
 // ============================================================
 
+// 管理通知を受け取りたいGmailアドレスを設定してください。
+// 空文字のままなら管理通知は送信せず、お客さん向け確認メールとシート保存だけ行います。
+var OWNER_EMAIL_OVERRIDE_ = 'ccj.osaka@gmail.com';
+
 function doPost(e) {
   try {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -74,6 +78,7 @@ function handleEnrollmentLegacy_(ss, data) {
 
   sheet.appendRow(row);
   sendConfirmationEmail(data);
+  sendOwnerEnrollmentNotification_(data);
 }
 
 var PLAN_CHANGE_HEADERS_ = [
@@ -128,6 +133,7 @@ function handlePlanChange_(ss, root) {
   ];
   sheet.appendRow(row);
   sendPlanChangeConfirmationEmail_(p);
+  sendOwnerPlanChangeNotification_(p);
 }
 
 function ensureHeaders_(sheet, expectedHeaders) {
@@ -167,6 +173,26 @@ function handleLeaveRequest_(ss, root) {
     p['備考'] || ''
   ];
   sheet.appendRow(row);
+  sendOwnerLeaveRequestNotification_(p);
+}
+
+function getOwnerEmail_() {
+  return OWNER_EMAIL_OVERRIDE_;
+}
+
+function sendOwnerNotification_(subject, body, replyTo) {
+  try {
+    var ownerEmail = getOwnerEmail_();
+    if (!ownerEmail) return;
+
+    var options = {};
+    if (replyTo) {
+      options.replyTo = replyTo;
+    }
+    MailApp.sendEmail(ownerEmail, subject, body, options);
+  } catch (error) {
+    console.error('管理者通知メールの送信に失敗しました: ' + error.toString());
+  }
 }
 
 /**
@@ -269,6 +295,33 @@ function sendConfirmationEmail(data) {
   MailApp.sendEmail(data['メールアドレス'], subject, body);
 }
 
+function sendOwnerEnrollmentNotification_(data) {
+  var subject = '【管理通知】入会申し込み: ' + (data['氏名'] || '氏名未入力');
+  var body = '入会申し込みが送信されました。\n'
+    + 'スプレッドシートへの保存も完了しています。\n\n'
+    + '━━━━━━━━━━━━━━━━━━━━\n'
+    + '■ 入会申込日: ' + (data['入会申込日'] || '') + '\n'
+    + '■ コース: ' + (data['コース'] || '') + '\n'
+    + '■ 氏名: ' + (data['氏名'] || '') + '\n'
+    + '■ フリガナ: ' + (data['フリガナ'] || '') + '\n'
+    + '■ 生年月日: ' + (data['生年月日'] || '') + '\n'
+    + '■ 電話番号: ' + (data['電話番号'] || '') + '\n'
+    + (data['予備電話番号'] ? '■ 予備電話番号: ' + data['予備電話番号'] + '\n' : '')
+    + '■ メールアドレス: ' + (data['メールアドレス'] || '') + '\n'
+    + (data['予備メールアドレス'] ? '■ 予備メールアドレス: ' + data['予備メールアドレス'] + '\n' : '')
+    + '■ 郵便番号: ' + (data['郵便番号'] || '') + '\n'
+    + '■ 住所: ' + (data['住所1'] || '') + ' ' + (data['住所2'] || '') + '\n'
+    + (data['保護者氏名'] ? '■ 保護者氏名: ' + data['保護者氏名'] + '\n' : '')
+    + '■ 支払い方法: ' + (data['支払い方法'] || '') + '\n'
+    + '■ 年会費規定同意: ' + (data['年会費規定同意'] || '') + '\n'
+    + '■ 個人情報取扱同意: ' + (data['個人情報取扱同意'] || '') + '\n'
+    + '■ 規約バージョン: ' + (data['規約バージョン'] || '') + '\n'
+    + (data['備考'] ? '■ 備考: ' + data['備考'] + '\n' : '')
+    + '━━━━━━━━━━━━━━━━━━━━\n';
+
+  sendOwnerNotification_(subject, body, data['メールアドレス']);
+}
+
 /**
  * プラン変更申出の確認メール（任意・不要なら handlePlanChange_ 内の呼び出しを削除）
  */
@@ -295,6 +348,43 @@ function sendPlanChangeConfirmationEmail_(p) {
   if (p['メールアドレス']) {
     MailApp.sendEmail(p['メールアドレス'], subject, body);
   }
+}
+
+function sendOwnerPlanChangeNotification_(p) {
+  var subject = '【管理通知】プラン変更・休会: ' + (p['氏名'] || '氏名未入力');
+  var body = 'プラン変更・休会のお申し出が送信されました。\n'
+    + 'スプレッドシートへの保存も完了しています。\n\n'
+    + '━━━━━━━━━━━━━━━━━━━━\n'
+    + '■ 氏名: ' + (p['氏名'] || '') + '\n'
+    + '■ 電話番号: ' + (p['電話番号'] || '') + '\n'
+    + '■ メールアドレス: ' + (p['メールアドレス'] || '') + '\n'
+    + '■ 現コース: ' + (p['現コース'] || '') + '\n'
+    + '■ 希望コース: ' + (p['希望コース'] || '') + '\n'
+    + '■ 希望反映: ' + (p['希望反映'] || '') + '\n'
+    + (p['休会開始希望月'] ? '■ 休会開始希望月: ' + p['休会開始希望月'] + '\n' : '')
+    + (p['再開予定月'] ? '■ 再開予定月: ' + p['再開予定月'] + '\n' : '')
+    + (p['休会理由'] ? '■ 休会理由: ' + p['休会理由'] + '\n' : '')
+    + (p['備考'] ? '■ 備考: ' + p['備考'] + '\n' : '')
+    + '━━━━━━━━━━━━━━━━━━━━\n';
+
+  sendOwnerNotification_(subject, body, p['メールアドレス']);
+}
+
+function sendOwnerLeaveRequestNotification_(p) {
+  var subject = '【管理通知】退会手続き: ' + (p['氏名'] || '氏名未入力');
+  var body = '退会手続きが送信されました。\n'
+    + 'スプレッドシートへの保存も完了しています。\n\n'
+    + '━━━━━━━━━━━━━━━━━━━━\n'
+    + '■ 氏名: ' + (p['氏名'] || '') + '\n'
+    + '■ 電話番号: ' + (p['電話番号'] || '') + '\n'
+    + '■ メールアドレス: ' + (p['メールアドレス'] || '') + '\n'
+    + '■ 退会希望月: ' + (p['退会希望月'] || '') + '\n'
+    + '■ 最終参加予定日: ' + (p['最終参加予定日'] || '') + '\n'
+    + '■ 退会理由: ' + (p['退会理由'] || '') + '\n'
+    + (p['備考'] ? '■ 備考: ' + p['備考'] + '\n' : '')
+    + '━━━━━━━━━━━━━━━━━━━━\n';
+
+  sendOwnerNotification_(subject, body, p['メールアドレス']);
 }
 
 /**
