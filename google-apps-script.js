@@ -281,6 +281,13 @@ function sendConfirmationEmail(data) {
     + (data['備考'] ? '■ 備考: ' + data['備考'] + '\n' : '')
     + '━━━━━━━━━━━━━━━━━━━━\n'
     + bankTransferGuide + '\n'
+    + '【LINE公式へのご登録のお願い】\n'
+    + '今後のご案内・連絡網としてLINE公式を利用しています。\n'
+    + '該当するクラスのLINE公式にご登録ください。\n\n'
+    + '■ 大人クラスにご参加の方\n'
+    + 'https://lin.ee/NtABy10\n\n'
+    + '■ 子供クラスにご参加の方\n'
+    + 'https://lin.ee/9ESVrka\n\n'
     + '担当者よりご連絡を差し上げますので、\n'
     + 'しばらくお待ちくださいませ。\n\n'
     + 'ご不明な点がございましたら、\n'
