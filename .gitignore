@@ -1,2 +1,4 @@
 .DS_Store
 .autosync.log
+.gas-build/
+scripts/deploy-enrollment-gas.conf

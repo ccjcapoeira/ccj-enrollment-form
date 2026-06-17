@@ -6,18 +6,17 @@
 // 【セットアップ手順】
 //
 // 1. Google スプレッドシートを新規作成する
-//    - 1行目（ヘッダー）に以下を入力（入会用・先頭シートまたは「入会」シート）:
-//      A1: 入会申込日 … R1: 備考（README の表どおり）
+//    - シート名は「入会」「プラン変更」「退会手続き」を推奨。
+//      存在しなくても初回送信時にこのスクリプトが自動作成し、
+//      必要なヘッダー（18 列 / 11 列 / 8 列）も自己補完します。
 //
-// 2. プラン変更用シート「プラン変更」は、初回のプラン変更送信時に自動作成されます。
-//    手動で用意する場合は 1 行目を次のとおりにしてください:
-//      申請日時 | 氏名 | メールアドレス | 電話番号 | 現コース | 希望コース | 希望反映 | 備考 | 休会開始希望月 | 再開予定月 | 休会理由
+// 2. メニュー「拡張機能」→「Apps Script」を開き、下記を貼り付けて保存
 //
-// 3. メニュー「拡張機能」→「Apps Script」を開き、下記を貼り付けて保存
+// 3.「デプロイ」→「新しいデプロイ」→ ウェブアプリ（実行: 自分 / アクセス: 全員）
+//    既に運用中のスクリプトを差し替えた場合は「デプロイを管理」→
+//    既存ウェブアプリの「新バージョンをデプロイ」を必ず実行してください。
 //
-// 4.「デプロイ」→「新しいデプロイ」→ ウェブアプリ（実行: 自分 / アクセス: 全員）
-//
-// 5. 表示された URL を index.html / plan-change.html / leave-request.html の SCRIPT_URL に設定
+// 4. 表示された URL を index.html / plan-change.html / leave-request.html の SCRIPT_URL に設定
 //
 // ============================================================
 
@@ -48,11 +47,35 @@ function doPost(e) {
   }
 }
 
-/** 入会（従来どおりフラット JSON） */
+var ENROLLMENT_HEADERS_ = [
+  '入会申込日',
+  'コース',
+  '氏名',
+  'フリガナ',
+  '生年月日',
+  '電話番号',
+  '予備電話番号',
+  'メールアドレス',
+  '予備メールアドレス',
+  '郵便番号',
+  '住所1',
+  '住所2',
+  '保護者氏名',
+  '支払い方法',
+  '年会費規定同意',
+  '個人情報取扱同意',
+  '規約バージョン',
+  '備考'
+];
+
+/** 入会（フォームから flat JSON で受け取り、ENROLLMENT_HEADERS_ の順で 1 行追加） */
 function handleEnrollmentLegacy_(ss, data) {
   var sheet = ss.getSheetByName('入会');
   if (!sheet) {
-    sheet = ss.getSheets()[0];
+    sheet = ss.insertSheet('入会');
+    sheet.appendRow(ENROLLMENT_HEADERS_);
+  } else {
+    ensureHeaders_(sheet, ENROLLMENT_HEADERS_);
   }
 
   var row = [
@@ -159,6 +182,8 @@ function handleLeaveRequest_(ss, root) {
   if (!sheet) {
     sheet = ss.insertSheet('退会手続き');
     sheet.appendRow(LEAVE_REQUEST_HEADERS_);
+  } else {
+    ensureHeaders_(sheet, LEAVE_REQUEST_HEADERS_);
   }
 
   var ts = Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyyy/MM/dd HH:mm');
@@ -304,6 +329,7 @@ function sendConfirmationEmail(data) {
 
 function sendOwnerEnrollmentNotification_(data) {
   var subject = '【管理通知】入会申し込み: ' + (data['氏名'] || '氏名未入力');
+  var initialPaymentGuide = buildInitialPaymentGuide_(data['コース']);
   var body = '入会申し込みが送信されました。\n'
     + 'スプレッドシートへの保存も完了しています。\n\n'
     + '━━━━━━━━━━━━━━━━━━━━\n'
@@ -320,6 +346,7 @@ function sendOwnerEnrollmentNotification_(data) {
     + '■ 住所: ' + (data['住所1'] || '') + ' ' + (data['住所2'] || '') + '\n'
     + (data['保護者氏名'] ? '■ 保護者氏名: ' + data['保護者氏名'] + '\n' : '')
     + '■ 支払い方法: ' + (data['支払い方法'] || '') + '\n'
+    + initialPaymentGuide + '\n'
     + '■ 年会費規定同意: ' + (data['年会費規定同意'] || '') + '\n'
     + '■ 個人情報取扱同意: ' + (data['個人情報取扱同意'] || '') + '\n'
     + '■ 規約バージョン: ' + (data['規約バージョン'] || '') + '\n'

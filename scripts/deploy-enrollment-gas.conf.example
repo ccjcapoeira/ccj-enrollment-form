@@ -1,0 +1,12 @@
+# Google Apps Script project ID
+# 取得方法: 入会フォーム用スプレッドシート（CCJカポエイラ入会申し込み）を開き、
+# 拡張機能 → Apps Script → ⚙ プロジェクトの設定 → 「ID」セクション → スクリプトID をコピー。
+GAS_SCRIPT_ID="REPLACE_WITH_SCRIPT_ID"
+
+# 既存 Web アプリの deployment ID（AKfy... で始まる長い ID）
+# 取得方法: Apps Script 画面右上「デプロイ → デプロイを管理」→ 既存ウェブアプリの「デプロイID」を表示
+# 初回は空でも実行可能。空の場合は新規デプロイされ、URL が変わるので注意。
+GAS_DEPLOYMENT_ID="AKfycbxrVHm38s5AjyAVRdQEeIRBtjZAQ4tnCT2deRMDx0VC7XaiZtpkWoboaPlBIlnBDz3v4g"
+
+# 任意: デプロイのバージョン説明
+DEPLOY_DESCRIPTION="Auto deploy from local repository"
