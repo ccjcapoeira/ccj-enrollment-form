@@ -313,11 +313,14 @@ function sendConfirmationEmail(data) {
     + '■ 子供クラスにご参加の方\n'
     + 'https://lin.ee/9ESVrka\n';
 
+  var warmClosing_ = 'お手続きが完了しましたら、ぜひクラスにお越しください。\n'
+    + '道場でお会いできる日を、スタッフ一同楽しみにしております。\n\n'
+    + 'わからないことがあれば、どうぞ遠慮なくお声がけください。\n';
+
   var nextStepsGuide_ = '【このあとお願いしたいこと】\n'
     + '1. 口座振替のご登録（下記URLより）\n'
     + '2. LINE公式へのご登録（該当クラスのリンクは本文後半）\n\n'
-    + '上記が完了しましたら、クラスへお越しください。\n'
-    + 'ご不明点がございましたら、お気軽にお問い合わせください。\n';
+    + warmClosing_;
 
   var body = data['氏名'] + ' 様\n\n'
     + 'この度は入会申し込みいただき、ありがとうございます。\n';
@@ -333,12 +336,10 @@ function sendConfirmationEmail(data) {
     body += '以下の内容で受け付けいたしました。\n\n'
       + applicationDetails + '\n'
       + lineGuide + '\n'
-      + '上記をご確認のうえ、クラスへお越しください。\n\n';
+      + warmClosing_ + '\n';
   }
 
-  body += 'ご不明な点がございましたら、\n'
-    + 'お気軽にお問い合わせください。\n\n'
-    + 'TEL: 050-3636-3410\n'
+  body += 'TEL: 050-3636-3410\n'
     + 'WEB: https://cordao.org/\n\n'
     + '━━━━━━━━━━━━━━━━━━━━\n'
     + 'CCJ.CAPOEIRA OSAKA\n'
