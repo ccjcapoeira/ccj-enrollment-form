@@ -659,12 +659,161 @@
       border: 1px solid var(--border);
       border-radius: 10px;
       background: #F9FAFB;
-      padding: 12px;
+      padding: 16px;
       margin: 14px auto 20px;
-      max-width: 440px;
+      max-width: 480px;
       font-size: 13px;
       color: var(--text);
       line-height: 1.7;
+    }
+    .success-flow-title {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--green);
+      margin: 0 0 14px;
+      text-align: center;
+    }
+    .success-flow-steps {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .success-flow-step {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .success-flow-step:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    .success-flow-step:first-child {
+      padding-top: 0;
+    }
+    .step-num {
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--green);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .step-body {
+      flex: 1;
+      min-width: 0;
+    }
+    .step-body strong {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+    .step-body p {
+      margin: 0 0 8px;
+      max-width: none;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .line-register-btn {
+      display: inline-block;
+      padding: 10px 14px;
+      background: #06C755;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: var(--transition);
+    }
+    .line-register-btn:hover {
+      opacity: .9;
+      color: #fff;
+    }
+    .line-register-links {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .nss-register-box {
+      text-align: left;
+    }
+    .nss-register-title {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--green);
+      margin-bottom: 8px;
+    }
+    .nss-org-code-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 14px 0;
+      padding: 10px 12px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .nss-org-code-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .nss-org-code-value {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--text);
+    }
+    .nss-copy-btn {
+      margin-left: auto;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--text);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .nss-copy-btn:hover {
+      border-color: var(--green);
+      color: var(--green);
+    }
+    .nss-register-btn {
+      display: block;
+      width: 100%;
+      padding: 14px 16px;
+      margin-top: 4px;
+      background: linear-gradient(135deg, var(--green) 0%, var(--green-light) 100%);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 10px;
+      transition: var(--transition);
+    }
+    .nss-register-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(0,133,74,.3);
+      color: #fff;
+    }
+    .nss-email-note {
+      margin-top: 12px;
+      margin-bottom: 0;
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: center;
     }
 
     /* ── Footer ── */
@@ -958,7 +1107,7 @@
         <svg fill="none" viewBox="0 0 24 24" stroke="#fff" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
       </div>
       <h2>お申し込みありがとうございます！</h2>
-      <p>入会申し込みを受け付けました。返信メールをご確認のうえ、必要なお手続きをお願いします。</p>
+      <p id="successIntro">入会申し込みを受け付けました。引き続き、下記のお手続きをお願いします。</p>
       <div class="success-next-step" id="successNextStep"></div>
       <p style="font-size:13px;color:var(--text-muted)">
         ご不明な点がございましたら<br>
@@ -981,6 +1130,7 @@
   const confirmTable = document.getElementById('confirmTable');
   const successScreen = document.getElementById('successScreen');
   const successNextStep = document.getElementById('successNextStep');
+  const successIntro = document.getElementById('successIntro');
   const btnBack = document.getElementById('btnBack');
   const btnConfirm = document.getElementById('btnConfirm');
   const submitBtn = document.getElementById('submitBtn');
@@ -1008,7 +1158,11 @@
       kids: 5000,
       dropin: 2500
     },
-    termsVersion: '2026-04'
+    termsVersion: '2026-04',
+    bankTransferUrl: 'https://www.nss-jp2.com/page_ex.jsp?CONTROLID=KTS0960&BUSINESSID=initDisp&DISPLAY_KEY_param=2k7XiZXZspuiZX',
+    organizationCode: '0944082',
+    lineUrlAdult: 'https://lin.ee/NtABy10',
+    lineUrlKids: 'https://lin.ee/9ESVrka'
   };
 
   // ─── Course Selection ───
@@ -1342,7 +1496,10 @@
   });
 
   function showSuccess(data) {
-    renderSuccessNextStep(data && data['支払い方法'] ? data['支払い方法'] : '');
+    renderSuccessNextStep(
+      data && data['支払い方法'] ? data['支払い方法'] : '',
+      data && data['コース'] ? data['コース'] : ''
+    );
     confirmOverlay.classList.remove('active');
     document.body.style.overflow = '';
     formContainer.style.display = 'none';
@@ -1350,10 +1507,84 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  function renderSuccessNextStep(paymentMethod) {
+  function buildLineRegisterHtml_(course) {
+    if (course === 'キッズクラス') {
+      return '<a class="line-register-btn" href="' + escapeHtml(POLICY.lineUrlKids) + '" target="_blank" rel="noopener noreferrer">キッズクラス LINE公式に登録</a>';
+    }
+    if (course) {
+      return '<a class="line-register-btn" href="' + escapeHtml(POLICY.lineUrlAdult) + '" target="_blank" rel="noopener noreferrer">大人クラス LINE公式に登録</a>';
+    }
+    return '<div class="line-register-links">'
+      + '<a class="line-register-btn" href="' + escapeHtml(POLICY.lineUrlAdult) + '" target="_blank" rel="noopener noreferrer">大人クラス LINE公式に登録</a>'
+      + '<a class="line-register-btn" href="' + escapeHtml(POLICY.lineUrlKids) + '" target="_blank" rel="noopener noreferrer">キッズクラス LINE公式に登録</a>'
+      + '</div>';
+  }
+
+  function renderBankTransferSuccess_(course) {
+    var code = POLICY.organizationCode;
+    successIntro.textContent = '入会申し込みを受け付けました。下記の3ステップをお願いします。';
+    successNextStep.innerHTML =
+      '<div class="success-flow">'
+      + '<p class="success-flow-title">お申し込み後の流れ</p>'
+      + '<ol class="success-flow-steps">'
+      + '<li class="success-flow-step">'
+      + '<span class="step-num">1</span>'
+      + '<div class="step-body">'
+      + '<strong>口座振替を登録（今すぐ）</strong>'
+      + '<p>お手続き時に団体コードが必要です。</p>'
+      + '<div class="nss-org-code-row">'
+      + '<span class="nss-org-code-label">団体コード</span>'
+      + '<span class="nss-org-code-value" id="nssOrgCode">' + escapeHtml(code) + '</span>'
+      + '<button type="button" class="nss-copy-btn" id="nssCopyBtn">コピー</button>'
+      + '</div>'
+      + '<a class="nss-register-btn" href="' + escapeHtml(POLICY.bankTransferUrl) + '" target="_blank" rel="noopener noreferrer">口座振替の登録へ</a>'
+      + '</div>'
+      + '</li>'
+      + '<li class="success-flow-step">'
+      + '<span class="step-num">2</span>'
+      + '<div class="step-body">'
+      + '<strong>LINE公式に登録</strong>'
+      + '<p>今後のご案内・連絡網としてご利用ください。</p>'
+      + buildLineRegisterHtml_(course)
+      + '</div>'
+      + '</li>'
+      + '<li class="success-flow-step">'
+      + '<span class="step-num">3</span>'
+      + '<div class="step-body">'
+      + '<strong>担当者からのご連絡をお待ちください</strong>'
+      + '<p>お申し込み内容を確認のうえ、担当よりご連絡いたします。</p>'
+      + '</div>'
+      + '</li>'
+      + '</ol>'
+      + '<p class="nss-email-note">確認メールにも同じ内容をお送りしています。</p>'
+      + '</div>';
+
+    var copyBtn = document.getElementById('nssCopyBtn');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', function () {
+        function onCopied() {
+          copyBtn.textContent = 'コピーしました';
+          setTimeout(function () { copyBtn.textContent = 'コピー'; }, 2000);
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(code).then(onCopied).catch(function () {
+            window.prompt('団体コードをコピーしてください', code);
+          });
+        } else {
+          window.prompt('団体コードをコピーしてください', code);
+        }
+      });
+    }
+  }
+
+  function renderSuccessNextStep(paymentMethod, course) {
+    if (paymentMethod === '口座振替') {
+      renderBankTransferSuccess_(course || '');
+      return;
+    }
+
+    successIntro.textContent = '入会申し込みを受け付けました。引き続き、下記のお手続きをお願いします。';
     var guidance = {
-      '口座振替':
-        '次のご案内: 返信メールに記載の「口座振替ご登録ページURL」からお手続きをお願いします。メール内の団体コードをご確認のうえ、期日までに口座登録を完了してください。',
       'クレジットカード(PayPal)':
         '次のご案内: PayPal決済ページのご案内を担当よりお送りします。案内到着後にお手続きをお願いします。',
       '現金':
@@ -1372,7 +1603,14 @@
       paypal: 'クレジットカード(PayPal)',
       cash: '現金'
     };
-    renderSuccessNextStep(methods[preview] || '口座振替');
+    var courseMap = {
+      kids: 'キッズクラス',
+      beginner: 'レギュラーコース'
+    };
+    renderSuccessNextStep(
+      methods[preview] || '口座振替',
+      courseMap[params.get('course')] || ''
+    );
     formContainer.style.display = 'none';
     successScreen.classList.add('active');
   }

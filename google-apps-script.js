@@ -265,16 +265,18 @@ function formatYen_(amount) {
 }
 
 function sendConfirmationEmail(data) {
-  var subject = '【CCJ.CAPOEIRA OSAKA】入会申し込みを受け付けました';
   var bankTransferUrl = 'https://www.nss-jp2.com/page_ex.jsp?CONTROLID=KTS0960&BUSINESSID=initDisp&DISPLAY_KEY_param=2k7XiZXZspuiZX';
   var organizationCode = '0944082';
   var paymentMethod = data['支払い方法'] || '';
+  var isBankTransfer = paymentMethod.indexOf('口座振替') !== -1;
+  var subject = isBankTransfer
+    ? '【要対応】【CCJ.CAPOEIRA OSAKA】口座振替のご登録をお願いします'
+    : '【CCJ.CAPOEIRA OSAKA】入会申し込みを受け付けました';
   var bankTransferGuide = '';
   var initialPaymentGuide = buildInitialPaymentGuide_(data['コース']);
 
-  if (paymentMethod.indexOf('口座振替') !== -1) {
-    bankTransferGuide = '\n'
-      + '【口座振替ご登録のお願い】\n'
+  if (isBankTransfer) {
+    bankTransferGuide = '【口座振替ご登録のお願い】\n'
       + '口座振替のお手続きについては、以下のページをご確認ください。\n'
       + bankTransferUrl + '\n\n'
       + 'お手続き時の団体コード（必須）: ' + organizationCode + '\n\n'
@@ -284,10 +286,7 @@ function sendConfirmationEmail(data) {
       + '落としが翌月以降となる場合があります。\n';
   }
 
-  var body = data['氏名'] + ' 様\n\n'
-    + 'この度は入会申し込みいただき、ありがとうございます。\n'
-    + '以下の内容で受け付けいたしました。\n\n'
-    + '━━━━━━━━━━━━━━━━━━━━\n'
+  var applicationDetails = '━━━━━━━━━━━━━━━━━━━━\n'
     + '■ コース: ' + data['コース'] + '\n'
     + '■ 氏名: ' + data['氏名'] + '\n'
     + '■ フリガナ: ' + data['フリガナ'] + '\n'
@@ -304,18 +303,40 @@ function sendConfirmationEmail(data) {
     + '■ 規約同意: ' + (data['年会費規定同意'] || '同意') + '\n'
     + '■ 個人情報同意: ' + (data['個人情報取扱同意'] || '同意') + '\n'
     + (data['備考'] ? '■ 備考: ' + data['備考'] + '\n' : '')
-    + '━━━━━━━━━━━━━━━━━━━━\n'
-    + bankTransferGuide + '\n'
-    + '【LINE公式へのご登録のお願い】\n'
+    + '━━━━━━━━━━━━━━━━━━━━\n';
+
+  var lineGuide = '【LINE公式へのご登録のお願い】\n'
     + '今後のご案内・連絡網としてLINE公式を利用しています。\n'
     + '該当するクラスのLINE公式にご登録ください。\n\n'
     + '■ 大人クラスにご参加の方\n'
     + 'https://lin.ee/NtABy10\n\n'
     + '■ 子供クラスにご参加の方\n'
-    + 'https://lin.ee/9ESVrka\n\n'
-    + '担当者よりご連絡を差し上げますので、\n'
-    + 'しばらくお待ちくださいませ。\n\n'
-    + 'ご不明な点がございましたら、\n'
+    + 'https://lin.ee/9ESVrka\n';
+
+  var body = data['氏名'] + ' 様\n\n'
+    + 'この度は入会申し込みいただき、ありがとうございます。\n';
+
+  if (isBankTransfer) {
+    body += 'まずは口座振替のご登録をお願いいたします。\n\n'
+      + '【お申し込み後の流れ】\n'
+      + '1. 口座振替を登録（下記URLより）\n'
+      + '2. LINE公式に登録（本文後半をご確認ください）\n'
+      + '3. 担当者からのご連絡をお待ちください\n\n'
+      + bankTransferGuide + '\n'
+      + '【お申し込み内容】\n'
+      + applicationDetails + '\n'
+      + lineGuide + '\n'
+      + '担当者よりご連絡を差し上げますので、\n'
+      + 'しばらくお待ちくださいませ。\n\n';
+  } else {
+    body += '以下の内容で受け付けいたしました。\n\n'
+      + applicationDetails + '\n'
+      + lineGuide + '\n'
+      + '担当者よりご連絡を差し上げますので、\n'
+      + 'しばらくお待ちくださいませ。\n\n';
+  }
+
+  body += 'ご不明な点がございましたら、\n'
     + 'お気軽にお問い合わせください。\n\n'
     + 'TEL: 050-3636-3410\n'
     + 'WEB: https://cordao.org/\n\n'
