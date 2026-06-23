@@ -313,27 +313,27 @@ function sendConfirmationEmail(data) {
     + '■ 子供クラスにご参加の方\n'
     + 'https://lin.ee/9ESVrka\n';
 
+  var nextStepsGuide_ = '【このあとお願いしたいこと】\n'
+    + '1. 口座振替のご登録（下記URLより）\n'
+    + '2. LINE公式へのご登録（該当クラスのリンクは本文後半）\n\n'
+    + '上記が完了しましたら、クラスへお越しください。\n'
+    + 'ご不明点がございましたら、お気軽にお問い合わせください。\n';
+
   var body = data['氏名'] + ' 様\n\n'
     + 'この度は入会申し込みいただき、ありがとうございます。\n';
 
   if (isBankTransfer) {
-    body += 'まずは口座振替のご登録をお願いいたします。\n\n'
-      + '【お申し込み後の流れ】\n'
-      + '1. 口座振替を登録（下記URLより）\n'
-      + '2. LINE公式に登録（本文後半をご確認ください）\n'
-      + '3. 担当者からのご連絡をお待ちください\n\n'
+    body += '\n'
+      + nextStepsGuide_ + '\n'
       + bankTransferGuide + '\n'
       + '【お申し込み内容】\n'
       + applicationDetails + '\n'
-      + lineGuide + '\n'
-      + '担当者よりご連絡を差し上げますので、\n'
-      + 'しばらくお待ちくださいませ。\n\n';
+      + lineGuide + '\n';
   } else {
     body += '以下の内容で受け付けいたしました。\n\n'
       + applicationDetails + '\n'
       + lineGuide + '\n'
-      + '担当者よりご連絡を差し上げますので、\n'
-      + 'しばらくお待ちくださいませ。\n\n';
+      + '上記をご確認のうえ、クラスへお越しください。\n\n';
   }
 
   body += 'ご不明な点がございましたら、\n'
