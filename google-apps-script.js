@@ -8,7 +8,7 @@
 // 1. Google スプレッドシートを新規作成する
 //    - シート名は「入会」「プラン変更」「退会手続き」を推奨。
 //      存在しなくても初回送信時にこのスクリプトが自動作成し、
-//      必要なヘッダー（18 列 / 11 列 / 8 列）も自己補完します。
+//      必要なヘッダー（20 列 / 11 列 / 8 列）も自己補完します。
 //
 // 2. メニュー「拡張機能」→「Apps Script」を開き、下記を貼り付けて保存
 //
@@ -65,7 +65,9 @@ var ENROLLMENT_HEADERS_ = [
   '年会費規定同意',
   '個人情報取扱同意',
   '規約バージョン',
-  '備考'
+  '備考',
+  '出席状態',
+  '連携コード送付'
 ];
 
 /** 入会（フォームから flat JSON で受け取り、ENROLLMENT_HEADERS_ の順で 1 行追加） */
@@ -96,7 +98,9 @@ function handleEnrollmentLegacy_(ss, data) {
     data['年会費規定同意'] || '',
     data['個人情報取扱同意'] || '',
     data['規約バージョン'] || '',
-    data['備考'] || ''
+    data['備考'] || '',
+    '仮登録NSS待ち',
+    '未送付'
   ];
 
   sheet.appendRow(row);
@@ -346,6 +350,7 @@ function sendConfirmationEmail(data) {
     + 'コハダン・ジ・コンタス大阪\n'
     + '━━━━━━━━━━━━━━━━━━━━';
 
+  // 出席の連携コードはここに載せない。相手のNSS完了後、LINE優先・不在時メール（ccj-attendance の planEnrollmentLinkCode）。
   MailApp.sendEmail(data['メールアドレス'], subject, body);
 }
 
